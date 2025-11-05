@@ -1,46 +1,81 @@
-import { StyleSheet, Text, View, useColorScheme } from "react-native";
+import * as SecureStore from "expo-secure-store";
+import { useState } from "react";
+import { Button, StyleSheet, Text, TextInput, View } from "react-native";
 
-import { StatusBar } from "expo-status-bar";
+async function save(key: string, value: any) {
+  await SecureStore.setItemAsync(key, value);
+}
 
-export default function Index() {
-  const colorScheme = useColorScheme();
+async function getValueFor(key: string) {
+  let result = await SecureStore.getItemAsync(key);
+  if (result) {
+    alert("🔐 Here's your value 🔐 \n" + result);
+  } else {
+    alert("No values stored under that key.");
+  }
+}
 
-  const themeTextStyle =
-    colorScheme === "light" ? styles.lightThemeText : styles.darkThemeText;
-  const themeContainerStyle =
-    colorScheme === "light" ? styles.lightContainer : styles.darkContainer;
+export default function App() {
+  const [key, onChangeKey] = useState("Your key here");
+  const [value, onChangeValue] = useState("Your value here");
 
   return (
-    <>
-      <StatusBar style="auto" />
-      <View style={[styles.container, themeContainerStyle]}>
-        <Text style={[styles.text, themeTextStyle]}>
-          Color scheme: {colorScheme}
-        </Text>
-      </View>
-    </>
+    <View style={styles.container}>
+      <Text style={styles.paragraph}>Save an item, and grab it later!</Text>
+      {}
+
+      <TextInput
+        style={styles.textInput}
+        clearTextOnFocus
+        onChangeText={(text) => onChangeKey(text)}
+        value={key}
+      />
+      <TextInput
+        style={styles.textInput}
+        clearTextOnFocus
+        onChangeText={(text) => onChangeValue(text)}
+        value={value}
+      />
+      {}
+      <Button
+        title="Save this key/value pair"
+        onPress={() => {
+          save(key, value);
+          onChangeKey("Your key here");
+          onChangeValue("Your value here");
+        }}
+      />
+      <Text style={styles.paragraph}>🔐 Enter your key 🔐</Text>
+      <TextInput
+        style={styles.textInput}
+        onSubmitEditing={(event) => {
+          getValueFor(event.nativeEvent.text);
+        }}
+        placeholder="Enter the key for the value you want to get"
+      />
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: "center",
     justifyContent: "center",
+    paddingTop: 10,
+    backgroundColor: "#ecf0f1",
+    padding: 8,
   },
-  text: {
-    fontSize: 20,
+  paragraph: {
+    marginTop: 34,
+    margin: 24,
+    fontSize: 18,
+    fontWeight: "bold",
+    textAlign: "center",
   },
-  lightContainer: {
-    backgroundColor: "#d0d0c0",
-  },
-  darkContainer: {
-    backgroundColor: "#242c40",
-  },
-  lightThemeText: {
-    color: "#242c40",
-  },
-  darkThemeText: {
-    color: "#d0d0c0",
+  textInput: {
+    height: 35,
+    borderColor: "gray",
+    borderWidth: 0.5,
+    padding: 4,
   },
 });
