@@ -48,3 +48,11 @@ Join our community of developers creating universal apps.
 
 - [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
 - [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+
+## Fonts Summary
+
+- There are 2 types, local and google fonts
+- 2 ways to add fonts:
+  - expo-font-config in app.json
+  - useFont hook and load it upon app start
+- useFont hook will be used in Expo Go apps as the config way is not available in them
